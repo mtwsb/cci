@@ -1,35 +1,36 @@
 version: 2.1
 
 executors:
-  windows-executor:
-    machine: true  # Use CircleCI's Windows machine executor
-    working_directory: C:/repo  # Define working directory (Windows-style path)
+  python-executor:
+    docker:
+      - image: circleci/python:3.9 
+    working_directory: ~/repo  
 
 jobs:
   install:
-    executor: windows-executor
+    executor: python-executor
     steps:
-      - checkout  # Check out the code
+      - checkout  
       - run:
           name: Install dependencies
           command: |
-            python -m venv venv
-            venv\Scripts\activate  # Activate virtual environment on Windows
+            python -m venv venv  # Create the virtual environment in the Linux path
+            source venv/bin/activate  # Linux/macOS activation for virtual environment
             pip install --upgrade pip
             pip install -r requirements.txt
 
   test:
-    executor: windows-executor
+    executor: python-executor
     steps:
-      - checkout  # Check out the code
+      - checkout  
       - run:
           name: List contents of src folder (Debugging step)
-          command: dir src  # List files in the src directory (Windows command)
+          command: ls -la src  
       - run:
           name: Run Tests in src folder
           command: |
-            venv\Scripts\activate  # Activate virtual environment on Windows
-            pytest src/test.py --maxfail=10 --disable-warnings -v  # Run tests with verbosity
+            source venv/bin/activate  # Activate virtual environment
+            pytest src/test.py --maxfail=5 --disable-warnings -v  # Run tests with verbosity
 
 workflows:
   version: 2
@@ -39,6 +40,7 @@ workflows:
       - test:
           requires:
             - install
+
 
 
 
