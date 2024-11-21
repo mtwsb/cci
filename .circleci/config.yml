@@ -1,45 +1,36 @@
 version: 2.1
 
-executors:
-  python-executor:
-    docker:
-      - image: circleci/python:3.9 
-    working_directory: ~/repo  
-
 jobs:
-  install:
-    executor: python-executor
+
+  test:
+    docker:
+      - image: circleci/python:3.8  
+    working_directory: ~/repo  
     steps:
-      - checkout  
+      - checkout 
       - run:
           name: Install dependencies
           command: |
-            python -m venv venv  # Create the virtual environment in the Linux path
-            source .venv/Scripts/activate  
-            pip install --upgrade pip
-            pip install -r requirements.txt
-
-  test:
-    executor: python-executor
-    steps:
-      - checkout  
+            python -m venv venv  # Create a virtual environment
+            . venv/bin/activate  # Activate the virtual environment
+            pip install --upgrade pip  # Upgrade pip
+            pip install -r requirements.txt  # Install dependencies from requirements.txt
       - run:
-          name: List contents of src folder (Debugging step)
-          command: ls -la src  
-      - run:
-          name: Run Tests in src folder
+          name: Run tests with pytest
           command: |
-            source .venv/Scripts/activate  # Activate virtual environment
-            pytest src/test.py --maxfail=5 --disable-warnings -v  
+            . venv/bin/activate  # Activate virtual environment
+            pytest src/test.py  # Run the test file located in src/test.py
+      - persist_to_workspace:
+          root: ~/repo 
+            - notes.json  
+
 
 workflows:
   version: 2
-  test:
+  build_and_test:
     jobs:
-      - install
-      - test:
-          requires:
-            - install
+      - test 
+
 
 
 
