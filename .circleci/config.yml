@@ -10,57 +10,33 @@ jobs:
   install:
     executor: python-executor
     steps:
-      - checkout
+      - checkout 
       - run:
-          name: Install Dependencies
+          name: Install dependencies
           command: |
             python -m venv venv
-            . venv/bin/activate
+            . venv/bin/activate  # On Windows: venv\Scripts\activate
             pip install --upgrade pip
             pip install -r requirements.txt
 
   test:
     executor: python-executor
     steps:
-      - checkout
+      - checkout  
       - run:
-          name: Set up Python Virtual Environment
+          name: Run Tests in src folder
           command: |
-            python -m venv venv
-            . venv/bin/activate
-            pip install --upgrade pip
-            pip install -r requirements.txt
-      - run:
-          name: Run Tests
-          command: |
-            . venv/bin/activate
-            pytest --maxfail=5 --disable-warnings
-
-  deploy:
-    executor: python-executor
-    steps:
-      - checkout
-      - run:
-          name: Deploy Application
-          command: |
-            echo "Deploying application..."
-            # Add deployment commands here. Examples:
-            # scp -r ~/repo user@yourserver:/path/to/deploy
-            echo "Deployment complete!"
+            . venv/bin/activate  # On Windows: venv\Scripts\activate
+            pytest src/test.py --maxfail=5 --disable-warnings -v  # Run tests from src/test.py
 
 workflows:
   version: 2
-  test-and-deploy:
+  test:
     jobs:
       - install
       - test:
           requires:
             - install
-      - deploy:
-          requires:
-            - test
-          filters:
-            branches:
-              only: master
+
 
 
