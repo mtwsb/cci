@@ -54,4 +54,4 @@ workflows:
             - test
           filters:
             branches:
-              only: main  # Deploy only on the main branch
+              only: master 
