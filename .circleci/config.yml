@@ -1,33 +1,36 @@
 version: 2.1
 
 executors:
-  python-executor:
+  windows-executor:
     docker:
       - image: circleci/python:3.9
     working_directory: ~/repo
 
 jobs:
   install:
-    executor: python-executor
+    executor: windows-executor
     steps:
       - checkout 
       - run:
           name: Install dependencies
           command: |
             python -m venv venv
-            . venv/bin/activate  # On Windows: venv\Scripts\activate
+            venv\Scripts\activate  # Activate the virtual environment for Windows
             pip install --upgrade pip
             pip install -r requirements.txt
 
   test:
-    executor: python-executor
+    executor: windows-executor
     steps:
       - checkout  
       - run:
+          name: List contents of src folder (Debugging step)
+          command: dir src
+      - run:
           name: Run Tests in src folder
           command: |
-            . venv/bin/activate  # On Windows: venv\Scripts\activate
-            pytest src/test.py --maxfail=5 --disable-warnings -v  # Run tests from src/test.py
+            venv\Scripts\activate  # Activate the virtual environment for Windows
+            pytest src/test.py --maxfail=5 --disable-warnings -v  # Run tests with verbosity
 
 workflows:
   version: 2
@@ -37,6 +40,7 @@ workflows:
       - test:
           requires:
             - install
+
 
 
 
