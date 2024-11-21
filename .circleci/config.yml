@@ -1,0 +1,57 @@
+version: 2.1
+
+executors:
+  python-executor:
+    docker:
+      - image: circleci/python:3.9  # Use the appropriate Python version
+    working_directory: ~/repo
+
+jobs:
+  install:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Python dependencies
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install --upgrade pip
+            pip install pytest
+
+  test:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Run Tests
+          command: |
+            . venv/bin/activate
+            pytest --maxfail=5 --disable-warnings
+
+  deploy:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Deploy Application
+          command: |
+            echo "Deploying application..."
+            # Replace with actual deployment commands
+            # Example: scp or rsync files to your server, or upload to a cloud service
+            echo "Deployment complete!"
+
+workflows:
+  version: 2
+  test-and-deploy:
+    jobs:
+      - install
+      - test:
+          requires:
+            - install
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master 
