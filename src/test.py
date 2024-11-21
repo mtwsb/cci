@@ -1,8 +1,10 @@
 import json
 import os
 import pytest
+import sys
 from main import NoteManager
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 @pytest.fixture
 def note_manager(tmp_path):
     test_file = tmp_path / 'test_notes.json'
