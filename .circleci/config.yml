@@ -15,7 +15,7 @@ jobs:
           name: Install dependencies
           command: |
             python -m venv venv  # Create the virtual environment in the Linux path
-            source .venv/Scripts/activate  # Linux/macOS activation for virtual environment
+            source .venv/Scripts/activate  
             pip install --upgrade pip
             pip install -r requirements.txt
 
@@ -30,7 +30,7 @@ jobs:
           name: Run Tests in src folder
           command: |
             source .venv/Scripts/activate  # Activate virtual environment
-            pytest src/test.py --maxfail=5 --disable-warnings -v  # Run tests with verbosity
+            pytest src/test.py --maxfail=5 --disable-warnings -v  
 
 workflows:
   version: 2
